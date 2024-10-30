@@ -3,7 +3,7 @@ name: Deploy to Server
 on:
   push:
     branches:
-      - main  # در صورت نیاز به تغییر، این را به نام شاخه‌ای که می‌خواهید دیپلوی شود، تنظیم کنید
+      - main
 
 jobs:
   deploy:
@@ -20,7 +20,7 @@ jobs:
         username: ${{ secrets.SERVER_USER }}
         key: ${{ secrets.SERVER_SSH_KEY }}
         source: "./"
-        target: "~/path/to/your/project"  # مسیر پروژه روی سرور
+        target: "/home/ubuntu/octavaz"
 
     - name: Restart octavaz service
       uses: appleboy/ssh-action@v0.1.5
