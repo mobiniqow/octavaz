@@ -11,7 +11,7 @@ def get_active_directories():
     for dir in dirs:
         files = os.popen(f"ls {PROJECT_DIR}/{dir}").read()
         files = [file for file in files.split("\n") if files]
-        if 'models.py' in files:
+        if "models.py" in files:
             app_dirs.append(dir)
     return app_dirs
 

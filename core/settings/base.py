@@ -1,5 +1,5 @@
 from pathlib import Path
-
+from ckeditor import *
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 SECRET_KEY = "django-insecure-n4f@kkqo2w$+23*q89#e+09%j$457dtc0#2b7lryytn0e@wvki"
 
@@ -12,8 +12,11 @@ INSTALLED_APPS = [
     "whitenoise.runserver_nostatic",
     "django.contrib.staticfiles",
     "rest_framework",
+    "course",
+    "master",
     "account",
     "drf_yasg",
+    'django_ckeditor_5',
 ]
 # DATA_UPLOAD_MAX_MEMORY_SIZE = 524288022
 MIDDLEWARE = [

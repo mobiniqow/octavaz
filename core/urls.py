@@ -34,9 +34,12 @@ schema_view = get_schema_view(
 )
 
 urlpatterns = [
+    path("ckeditor5/", include('django_ckeditor_5.urls')),
     path("admin/", admin.site.urls),
     path("account/", include("account.urls")),
     path("swagger.json", schema_view.without_ui(cache_timeout=0), name="schema-json"),
+    path("course/", include("course.urls")),
+    path("master/", include("master.urls")),
     path(
         "swagger/",
         schema_view.with_ui("swagger", cache_timeout=0),
@@ -44,5 +47,5 @@ urlpatterns = [
     ),
     path("redoc/", schema_view.with_ui("redoc", cache_timeout=0), name="schema-redoc"),
 ]
-if settings.DEBUG:
-    urlpatterns.append(path("__debug__/", include("debug_toolbar.urls")))
+# if settings.DEBUG:
+#     urlpatterns.append(path("__debug__/", include("debug_toolbar.urls")))

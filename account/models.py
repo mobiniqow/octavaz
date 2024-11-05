@@ -39,7 +39,6 @@ class BasicUserManager(BaseUserManager):
 
 
 class User(AbstractBaseUser, PermissionsMixin):
-
     class State(models.IntegerChoices):
         SUSPEND = 0
         ACTIVE = 1
@@ -48,8 +47,13 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     created_at = jmodels.jDateField(auto_now_add=True)
     updated_at = jmodels.jDateField(auto_now=True)
-    avatar = models.FileField(upload_to='account/user/avatar',
-                              validators=[FileExtensionValidator(['jpg', 'png', 'jpeg']), ], blank=True)
+    avatar = models.FileField(
+        upload_to="account/user/avatar",
+        validators=[
+            FileExtensionValidator(["jpg", "png", "jpeg"]),
+        ],
+        blank=True,
+    )
     state = models.IntegerField(choices=State.choices, default=State.SUSPEND)
     user_name = models.CharField(max_length=33)
     phone = models.CharField(max_length=17, unique=True, validators=[phone_validator])
@@ -69,5 +73,3 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def has_module_perms(self, app_label):
         return self.is_staff
-
-
