@@ -6,7 +6,7 @@ from videocast.models import VideoCast, Comment
 class VideoCastSerializer(serializers.ModelSerializer):
     class Meta:
         model = VideoCast
-        fields = ['id', 'title', 'descripcion', 'media', 'url', 'created_at', 'updated_at', 'slug']
+        fields = ['id', 'title', 'description', 'media', 'url', 'created_at', 'updated_at', 'slug']
 
 class CommentSerializer(serializers.ModelSerializer):
     class Meta:
