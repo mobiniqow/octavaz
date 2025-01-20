@@ -1,7 +1,6 @@
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
-from django_ckeditor_5.fields import CKEditor5Field
-
+from ckeditor.fields import RichTextField
 from account.models import User
 
 
@@ -25,13 +24,13 @@ class CourseBase(models.Model):
     type = models.IntegerField(choices=Type.choices, default=Type.NORMAL)
     level = models.IntegerField(choices=Level.choices, default=Level.Beginner)
     name = models.CharField(max_length=100)
-    long_description = CKEditor5Field('long_description', config_name='extends')
+    long_description = RichTextField( )
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
-    course_contacts = CKEditor5Field('course_contacts', config_name='extends')
-    course_requirements = CKEditor5Field('course_requirements', config_name='extends')
-    course_prerequisite = CKEditor5Field('course_prerequisite', config_name='extends')
-    training_model = CKEditor5Field('training_model', config_name='extends',blank=True,null=True)
-    course_achievement = CKEditor5Field('course_achievement', config_name='extends',blank=True,null=True)
+    course_contacts = RichTextField( )
+    course_requirements = RichTextField( )
+    course_prerequisite = RichTextField( )
+    training_model = RichTextField( blank=True,null=True)
+    course_achievement = RichTextField( blank=True,null=True)
 class Course(models.Model):
     class Type(models.IntegerChoices):
         NORMAL = 0
@@ -51,15 +50,15 @@ class Course(models.Model):
     price = models.IntegerField()
     image = models.ImageField()
     rating = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(5)])
-    description = CKEditor5Field('description', config_name='extends')
-    long_description = CKEditor5Field('long_description', config_name='extends')
+    description = RichTextField( )
+    long_description = RichTextField( )
     time = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(10000)])
     trainings = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(10000)])
-    course_contacts = CKEditor5Field('course_contacts', config_name='extends')
-    course_requirements = CKEditor5Field('course_requirements', config_name='extends')
-    course_prerequisite = CKEditor5Field('course_prerequisite', config_name='extends')
-    training_model = CKEditor5Field('training_model', config_name='extends')
-    course_achievement = CKEditor5Field('course_achievement', config_name='extends')
+    course_contacts = RichTextField( )
+    course_requirements = RichTextField( )
+    course_prerequisite = RichTextField( )
+    training_model = RichTextField( )
+    course_achievement = RichTextField( )
 
 
 class CourseMaster(models.Model):

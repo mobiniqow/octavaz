@@ -11,7 +11,7 @@ class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
         fields = ('id', 'name')
-
+        ref_name = 'BlogCategorySerializer'
 class CommentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Comment

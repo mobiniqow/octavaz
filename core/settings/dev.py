@@ -6,7 +6,7 @@ import os
 # env_config = RepositoryEnv(os.path.join(BASE_DIR, 'azmon/settings/.env.dev'))
 # env_config = env_config.data
 DEBUG = True
-INSTALLED_APPS.append("debug_toolbar")
+# INSTALLED_APPS.append("debug_toolbar")
 INSTALLED_APPS.append("django_extensions")
 os.environ["DJANGO_SETTINGS_MODULE"] = "core.settings.dev"
 ALLOWED_HOSTS = ["*"]
@@ -21,6 +21,7 @@ ALLOWED_HOSTS = ["*"]
 #         'PORT': 5432
 #     }
 # }
+CKEDITOR_UPLOAD_PATH = "uploads/ckeditor/"
 
 TEMPLATES = [
     {
@@ -43,7 +44,7 @@ DATABASES = {
         "NAME": BASE_DIR / "db.sqlite3",
     }
 }
-MIDDLEWARE.append("debug_toolbar.middleware.DebugToolbarMiddleware")
+# MIDDLEWARE.append("debug_toolbar.middleware.DebugToolbarMiddleware")
 STATIC_ROOT = os.path.join(BASE_DIR, "static")
 # STATICFILES_DIRS  = [os.path.join(BASE_DIR, "static")]
 REST_FRAMEWORK = {
@@ -68,9 +69,9 @@ INTERNAL_IPS = [
     "localhost",
 ]
 # show in drf
-DEBUG_TOOLBAR_CONFIG = {
-    "SHOW_TOOLBAR_CALLBACK": lambda request: True,
-}
+# DEBUG_TOOLBAR_CONFIG = {
+#     "SHOW_TOOLBAR_CALLBACK": lambda request: True,
+# }
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(days=14),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=45),
