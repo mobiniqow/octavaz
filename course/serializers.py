@@ -3,7 +3,7 @@ from .models import Category, Course, CourseChapter, Section, ChapterPurchase, C
     CourseChapterMedia
 
 
-class CategorySerializer(serializers.ModelSerializer):
+class SerializerCategorySerializer(serializers.ModelSerializer):
     # season =serializers.SerializerMethodField()
     # lesson = serializers.SerializerMethodField()
 
@@ -13,7 +13,7 @@ class CategorySerializer(serializers.ModelSerializer):
 
     # def get_season(self, obj):
     #     return obj.season
-
+    ref_name = 'CourseCategorySerializer'
 
 class CourseSerializer(serializers.ModelSerializer):
     class Meta:
@@ -41,7 +41,7 @@ class ChapterPurchaseSerializer(serializers.ModelSerializer):
         fields = ['course_name', 'chapter_name', 'purchased_at', 'payment_method']
 
 class CourseBaseSerializer(serializers.ModelSerializer):
-    category = CategorySerializer(read_only=True)
+    category = SerializerCategorySerializer(read_only=True)
     coursechapters = CourseChapterSerializer(source='coursechapter_set', many=True, read_only=True)
     courses = serializers.SerializerMethodField()
     # محاسبه قیمت کل دوره‌ها
@@ -93,10 +93,6 @@ class CourseDetailSerializer(serializers.ModelSerializer):
         return CourseChapterSerializer(chapters, many=True).data
 
 
-class CourseChapterSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = CourseChapter
-        fields = ['id', 'name', 'chapter', 'media']
 
 class CourseChapterMediaSerializer(serializers.ModelSerializer):
     class Meta:

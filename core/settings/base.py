@@ -19,6 +19,7 @@ INSTALLED_APPS = [
     "blog",
     "wallet",
     "cart",
+    "videocast",
     "tickets",
     "train",
     "drf_yasg",

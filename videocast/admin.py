@@ -1,3 +1,5 @@
 from django.contrib import admin
+from .models import VideoCast, Comment
 
-# Register your models here.
+admin.site.register(VideoCast)
+admin.site.register(Comment)

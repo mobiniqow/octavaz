@@ -31,6 +31,8 @@ class CourseBase(models.Model):
     course_prerequisite = RichTextField( )
     training_model = RichTextField( blank=True,null=True)
     course_achievement = RichTextField( blank=True,null=True)
+    image = models.ImageField( blank=True,null=True)
+
 class Course(models.Model):
     class Type(models.IntegerChoices):
         NORMAL = 0

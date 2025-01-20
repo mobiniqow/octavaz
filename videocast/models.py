@@ -1,5 +1,7 @@
 from django.db import models
-from django.contrib.auth.models import User
+
+from account.models import User
+
 
 class VideoCast(models.Model):
     media = models.FileField(upload_to='media/', null=True, blank=True)  # Video file
@@ -20,4 +22,4 @@ class Comment(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"Comment by {self.user.username} on {self.video.title}"
+        return f"Comment by {self.user.user_name} on {self.video.title}"

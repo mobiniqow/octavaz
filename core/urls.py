@@ -46,6 +46,7 @@ urlpatterns = [
     path("cart/", include("cart.urls")),
     path("wallet/", include("wallet.urls")),
     path("course/", include("course.urls")),
+    path("videocast/", include("videocast.urls")),
     path("ticket/", include("tickets.urls")),
     path("train/", include("train.urls")),
     path("banner/", include("banner.urls")),

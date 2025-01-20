@@ -4,7 +4,7 @@ from rest_framework import filters
 from tickets.models import TicketResponse
 from wallet.models import Transaction
 from .models import Category, Course, CourseChapter, Section, UserCourse, CourseBase, CourseQuestion
-from .serializers import CategorySerializer, CourseSerializer, CourseChapterSerializer, SectionSerializer, \
+from .serializers import SerializerCategorySerializer, CourseSerializer, CourseChapterSerializer, SectionSerializer, \
     CourseBaseSerializer, CourseQuestionSerializer, CourseAnswerSerializer
 from .filters import CourseFilter, BaseCourseFilter
 from django_filters.rest_framework import DjangoFilterBackend
@@ -17,7 +17,7 @@ from .serializers import ChapterPurchaseSerializer
 
 class CategoryViewSet(viewsets.ModelViewSet):
     queryset = Category.objects.all()
-    serializer_class = CategorySerializer
+    serializer_class = SerializerCategorySerializer
 
 
 class CourseViewSet(viewsets.ModelViewSet):

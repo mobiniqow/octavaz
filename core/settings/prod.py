@@ -20,6 +20,7 @@ DATABASES = {
     }
 }
 
+CKEDITOR_UPLOAD_PATH = "uploads/ckeditor/"
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',

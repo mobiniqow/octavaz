@@ -9,6 +9,7 @@ from rest_framework_simplejwt.views import (
 )
 
 app_name = "v1"
+
 urlpatterns = [
     path("verify/", VerifyAPIView.as_view(), name="verify"),
     path("profile/", ProfileAPIView.as_view(), name="profile"),
