@@ -1,0 +1,19 @@
+[Unit]
+Description=gunicorn daemon
+Requires=octavaz.socket
+After=network.target
+
+
+[Service]
+User=ubuntu
+Group=www-data
+WorkingDirectory=/home/ubuntu/octavaz/octavaz
+ExecStart=/home/ubuntu/octavaz/venv/bin/gunicorn \
+    --access-logfile /var/log/octavaz/access.log \
+    --workers 3 \
+    --bind unix:/run/octavaz.sock \
+    core.wsgi:application \
+    --env DJANGO_SETTINGS_MODULE=core.settings.prod
+
+[Install]
+WantedBy=multi-user.target

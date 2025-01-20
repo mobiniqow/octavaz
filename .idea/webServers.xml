@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebServers">
+    <option name="servers">
+      <webServer id="386be0e4-91ba-4507-bf79-7691e200cdba" name="octavaz">
+        <fileTransfer accessType="SFTP" host="octavaz.com" port="22" sshConfigId="8ad08a06-0ecd-4294-a930-99fd3f8ff21b" sshConfig="ubuntu@octavaz.com:22 password">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" keepAliveTimeout="0" passiveMode="true" shareSSLContext="true" />
+          </advancedOptions>
+        </fileTransfer>
+      </webServer>
+    </option>
+  </component>
+</project>
