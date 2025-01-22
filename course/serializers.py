@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from .models import Category, Course, CourseChapter, Section, ChapterPurchase, CourseBase, CourseAnswer, CourseQuestion, \
-    CourseChapterMedia
+    CourseChapterMedia, CourseMaster
 
 
 class SerializerCategorySerializer(serializers.ModelSerializer):
@@ -44,23 +44,27 @@ class CourseBaseSerializer(serializers.ModelSerializer):
     category = SerializerCategorySerializer(read_only=True)
     coursechapters = CourseChapterSerializer(source='coursechapter_set', many=True, read_only=True)
     courses = serializers.SerializerMethodField()
-    # محاسبه قیمت کل دوره‌ها
     total_price = serializers.SerializerMethodField()
+    masters = serializers.SerializerMethodField()  # فیلد برای نمایش اساتید
 
     class Meta:
         model = CourseBase
         fields = '__all__'
 
     def get_total_price(self, obj):
-        # محاسبه قیمت کل بر اساس فیلدهای مرتبط
         total_price = 0
         for course in obj.course_set.all():
             total_price += course.price
         return total_price
+
     def get_courses(self, obj):
         courses = Course.objects.filter(base=obj)
         return CourseSerializer(courses, many=True).data
 
+    def get_masters(self, obj):
+        # استخراج اساتید مرتبط با دوره‌ها
+        masters = CourseMaster.objects.filter(course__base=obj)
+        return CourseMasterSerializer(masters, many=True).data
 class CourseAnswerSerializer(serializers.ModelSerializer):
     class Meta:
         model = CourseAnswer
@@ -98,3 +102,10 @@ class CourseChapterMediaSerializer(serializers.ModelSerializer):
     class Meta:
         model = CourseChapterMedia
         fields = ['id', 'order', 'media', 'course_chapter']
+
+class CourseMasterSerializer(serializers.ModelSerializer):
+    master_name = serializers.CharField(source='master.name', read_only=True)
+
+    class Meta:
+        model = CourseMaster
+        fields = ['master', 'master_name']

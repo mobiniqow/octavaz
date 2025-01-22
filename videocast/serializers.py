@@ -12,3 +12,4 @@ class CommentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Comment
         fields = ['id', 'user', 'video', 'content', 'created_at']
+        read_only_fields = ['id', 'created_at', 'user', 'video']  # user و video فقط خواندنی می‌شوند

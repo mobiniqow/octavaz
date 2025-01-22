@@ -49,19 +49,29 @@ class VideoCastCreateView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+
+
 class CommentCreateView(APIView):
     """
     Create a comment for a video.
     """
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated]  # دسترسی فقط برای کاربران احراز هویت شده
 
     def post(self, request, video_slug):
+        # پیدا کردن ویدیو بر اساس slug
         video = get_object_or_404(VideoCast, slug=video_slug)
-        data = request.data
-        data['video'] = video.id
-        data['user'] = request.user.id
+
+        # تنظیم داده‌ها: کاربر و ویدیو از منابع مرتبط گرفته می‌شوند
+        data = {
+            'video': video.id,  # ID ویدیو از URL
+            'user': request.user.id,  # ID کاربر از request.user
+            'content': request.data.get('content')  # محتوا از داده‌های درخواست
+        }
+
+        # سریالایزر برای اعتبارسنجی داده‌ها
         serializer = CommentSerializer(data=data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+

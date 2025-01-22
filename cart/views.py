@@ -19,25 +19,48 @@ class ViewCart(APIView):
         serializer = CartSerializer(cart)
         return Response(serializer.data)
 
+
 class AddToCart(APIView):
     permission_classes = [IsAuthenticated]
 
-    def post(self, request, course_id):
-        try:
-            course = Course.objects.get(id=course_id)
-        except Course.DoesNotExist:
-            return Response({'detail': 'Course not found.'}, status=status.HTTP_404_NOT_FOUND)
+    def post(self, request, course_ids):
+        # تبدیل رشته شناسه‌ها به لیست
+        course_ids = course_ids.split(',')
 
-        # Get or create the user's cart
-        cart, created = Cart.objects.get_or_create(user=request.user)
+        # بررسی وجود حداقل یک شناسه معتبر
+        if not course_ids:
+            return Response({'detail': 'No course IDs provided.'}, status=status.HTTP_400_BAD_REQUEST)
 
-        # Create a CartItem if it doesn't exist for the course
-        cart_item, created = CartItem.objects.get_or_create(cart=cart, course=course)
+        # دریافت یا ساخت سبد خرید کاربر
+        cart, _ = Cart.objects.get_or_create(user=request.user)
 
-        if not created:
-            return Response({'detail': 'Course already in cart.'}, status=status.HTTP_400_BAD_REQUEST)
+        added_courses = []
+        already_in_cart = []
+        not_found_courses = []
 
-        return Response({'detail': 'Item added to cart.'}, status=status.HTTP_201_CREATED)
+        # پردازش هر شناسه کورس
+        for course_id in course_ids:
+            try:
+                course = Course.objects.get(id=course_id)
+            except Course.DoesNotExist:
+                not_found_courses.append(course_id)
+                continue
+
+            # بررسی یا ساخت آیتم سبد خرید
+            cart_item, created = CartItem.objects.get_or_create(cart=cart, course=course)
+
+            if created:
+                added_courses.append(course_id)
+            else:
+                already_in_cart.append(course_id)
+
+        response_data = {
+            'added_courses': added_courses,
+            'already_in_cart': already_in_cart,
+            'not_found_courses': not_found_courses
+        }
+
+        return Response(response_data, status=status.HTTP_200_OK)
 
 class RemoveFromCart(APIView):
     permission_classes = [IsAuthenticated]
