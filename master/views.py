@@ -197,6 +197,7 @@ class FeedbackView(APIView):
         feedback.delete()
         return Response({"message": "Feedback deleted successfully"}, status=status.HTTP_204_NO_CONTENT)
 
+
 # course management api
 class CourseManagementView(APIView):
 
@@ -239,7 +240,8 @@ class CourseManagementView(APIView):
         """
         List all courses of the current master.
         """
-        courses = Course.objects.filter(coursemaster__master=request.user)
+        course = [i.course.id for i in CourseMaster.objects.filter(master__master=request.user)]
+        courses = Course.objects.filter(id__in=course)
         serializer = CourseDetailSerializer(courses, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -288,6 +290,7 @@ class ChapterManagementView(APIView):
         chapter.delete()
         return Response({"message": "Chapter deleted successfully."}, status=status.HTTP_204_NO_CONTENT)
 
+
 # API for managing chapter media
 class ChapterMediaManagementView(APIView):
     def post(self, request, chapter_id):
@@ -310,12 +313,14 @@ class ChapterMediaManagementView(APIView):
         """
         Delete media from a chapter.
         """
-        media = CourseChapterMedia.objects.filter(id=media_id, course_chapter__course__coursemaster__master=request.user).first()
+        media = CourseChapterMedia.objects.filter(id=media_id,
+                                                  course_chapter__course__coursemaster__master=request.user).first()
         if not media:
             return Response({"error": "Media not found or access denied."}, status=status.HTTP_404_NOT_FOUND)
 
         media.delete()
         return Response({"message": "Media deleted successfully."}, status=status.HTTP_204_NO_CONTENT)
+
 
 # API for course analytics
 class CourseAnalyticsView(APIView):
@@ -329,7 +334,8 @@ class CourseAnalyticsView(APIView):
             return Response({"error": "Course not found or access denied."}, status=status.HTTP_404_NOT_FOUND)
 
         # Calculate total revenue and enrollment count
-        total_revenue = UserCourse.objects.filter(course=course, is_paid=True).aggregate(total=Sum('transaction__amount'))['total'] or 0
+        total_revenue = \
+        UserCourse.objects.filter(course=course, is_paid=True).aggregate(total=Sum('transaction__amount'))['total'] or 0
         enrollment_count = UserCourse.objects.filter(course=course).count()
 
         data = {
