@@ -15,16 +15,35 @@ class SerializerCategorySerializer(serializers.ModelSerializer):
     #     return obj.season
     ref_name = 'CourseCategorySerializer'
 
-class CourseSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Course
-        fields = "__all__"
 
+class CourseChapterMediaSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CourseChapterMedia
+        fields = ['id', 'order', 'media', 'course_chapter']
 
 class CourseChapterSerializer(serializers.ModelSerializer):
+    medias = CourseChapterMediaSerializer(source='coursechaptermedia_set', many=True, read_only=True)
+
     class Meta:
         model = CourseChapter
-        fields = "__all__"
+        fields =  "__all__"
+
+class CourseSerializer(serializers.ModelSerializer):
+    chapters = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Course
+        fields = [
+            'id', 'name', 'description', 'long_description', 'price', 'image',
+            'category', 'level', 'type', 'time', 'trainings', 'course_contacts',
+            'course_requirements', 'course_prerequisite', 'training_model',
+            'course_achievement', 'chapters'
+        ]
+
+    def get_chapters(self, obj):
+        chapters = CourseChapter.objects.filter(course=obj)
+        return CourseChapterSerializer(chapters, many=True).data
+
 
 
 class SectionSerializer(serializers.ModelSerializer):
@@ -97,11 +116,6 @@ class CourseDetailSerializer(serializers.ModelSerializer):
         return CourseChapterSerializer(chapters, many=True).data
 
 
-
-class CourseChapterMediaSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = CourseChapterMedia
-        fields = ['id', 'order', 'media', 'course_chapter']
 
 class CourseMasterSerializer(serializers.ModelSerializer):
     master_name = serializers.CharField(source='master.name', read_only=True)

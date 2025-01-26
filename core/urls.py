@@ -49,6 +49,7 @@ urlpatterns = [
     path("videocast/", include("videocast.urls")),
     path("ticket/", include("tickets.urls")),
     path("train/", include("train.urls")),
+    path("options/", include("options.urls")),
     path("banner/", include("banner.urls")),
     path('blog/', include('blog.urls')),
     path("master/", include("master.urls")),

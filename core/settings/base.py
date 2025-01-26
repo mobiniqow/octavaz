@@ -24,6 +24,7 @@ INSTALLED_APPS = [
     "train",
     "drf_yasg",
     'ckeditor',
+    'options',
 ]
 # DATA_UPLOAD_MAX_MEMORY_SIZE = 524288022
 MIDDLEWARE = [
