@@ -45,6 +45,12 @@ class User(AbstractBaseUser, PermissionsMixin):
         REPORTED = 2
         BANNED = 3
 
+    class Role(models.IntegerChoices):
+        USER = 0
+        MASTER = 1
+        ADMIN = 2
+
+    role = models.IntegerField(choices=Role.choices, default=Role.USER)
     created_at = jmodels.jDateField(auto_now_add=True)
     updated_at = jmodels.jDateField(auto_now=True)
     avatar = models.FileField(
@@ -54,7 +60,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         ],
         blank=True,
     )
-    address = models.TextField(blank=True,null=True)
+    address = models.TextField(blank=True, null=True)
     state = models.IntegerField(choices=State.choices, default=State.SUSPEND)
     user_name = models.CharField(max_length=33)
     phone = models.CharField(max_length=17, unique=True, validators=[phone_validator])

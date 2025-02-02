@@ -1,9 +1,10 @@
+from django.db.transaction import atomic
 from rest_framework import viewsets, status
 from rest_framework import filters
 
 from tickets.models import TicketResponse
 from wallet.models import Transaction
-from .models import Category, Course, CourseChapter, Section, UserCourse, CourseBase, CourseQuestion
+from .models import Category, Course, CourseChapter, Section, UserCourse, CourseBase, CourseQuestion, CourseMaster
 from .serializers import SerializerCategorySerializer, CourseSerializer, CourseChapterSerializer, SectionSerializer, \
     CourseBaseSerializer, CourseQuestionSerializer, CourseAnswerSerializer
 from .filters import CourseFilter, BaseCourseFilter
@@ -90,18 +91,21 @@ class StudentCourse(APIView):
 class CourseQuestionView(APIView):
     permission_classes = [IsAuthenticated]
 
+    @atomic
     def post(self, request, course_id):
         """
         Submit a new question for a course.
         """
-        data = request.data
-        data['student'] = request.user.id
-        data['course'] = course_id
-        serializer = CourseQuestionSerializer(data=data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        # ایجاد یک نسخه قابل تغییر از داده‌های ارسال شده
+
+        try:
+            student = request.user
+            course = Course.objects.filter(id=course_id).first()
+            question_text = request.data.get('question_text')
+            CourseQuestion.objects.create(student=student, course=course, question_text=question_text)
+            return Response({"message": "Question submitted successfully"}, status=status.HTTP_201_CREATED)
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
     def get(self, request, course_id):
         """
@@ -134,3 +138,12 @@ class CourseAnswerView(APIView):
             question.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class CourseAllQuestionsView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request,):
+        courses = [i.course.id for i in CourseMaster.objects.filter(master__master=request.user)]
+        question = CourseQuestion.objects.filter(course_id__in=courses)
+        serializers = CourseQuestionSerializer(question,many=True)
+        return Response(serializers.data)

@@ -27,6 +27,7 @@ class UserRegisterSerializer(serializers.ModelSerializer):
 
 class LoginSerializer(serializers.Serializer):
     phone = serializers.CharField()
+    role = serializers.IntegerField()
 
 
 class GeneralSerializer(serializers.Serializer):

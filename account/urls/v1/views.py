@@ -86,7 +86,8 @@ class LoginAPIView(GenericAPIView):
         serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
         phone = serializer.validated_data.get("phone")
-        user = User.objects.filter(phone=phone)
+        role = serializer.validated_data.get("role")
+        user = User.objects.filter(phone=phone,role=role)
         # otp = User.objects.make_random_password(length=4, allowed_chars="123456789")
         otp = "1111"
         if not user.exists():

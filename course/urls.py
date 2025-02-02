@@ -2,7 +2,7 @@ from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from .views import CategoryViewSet, CourseViewSet, CourseChapterViewSet, SectionViewSet, PurchasedCoursesView, \
     CourseBaseDetailView, \
-    StudentReport, StudentCourse, CourseBaseViewSet, CourseQuestionView, CourseAnswerView
+    StudentReport, StudentCourse, CourseBaseViewSet, CourseQuestionView, CourseAnswerView, CourseAllQuestionsView
 
 router = DefaultRouter()
 router.register(r"categories", CategoryViewSet)
@@ -19,4 +19,5 @@ urlpatterns = [
     path('user-course',StudentCourse.as_view(), name='base-course'),
     path('api/courses/<int:course_id>/questions/', CourseQuestionView.as_view(), name='course-questions'),
     path('api/questions/<int:question_id>/answers/', CourseAnswerView.as_view(), name='course-answers'),
+    path('api/questions/', CourseAllQuestionsView.as_view(), name='course-all-question'),
 ]

@@ -1,3 +1,4 @@
+from django.shortcuts import get_object_or_404
 from rest_framework import serializers
 from .models import Category, Course, CourseChapter, Section, ChapterPurchase, CourseBase, CourseAnswer, CourseQuestion, \
     CourseChapterMedia, CourseMaster
@@ -98,6 +99,8 @@ class CourseQuestionSerializer(serializers.ModelSerializer):
         model = CourseQuestion
         fields = ['id', 'student', 'course', 'question_text', 'created_at', 'updated_at', 'status', 'answers']
         read_only_fields = ['id', 'created_at', 'updated_at', 'answers', 'student']
+
+
 
 class CourseDetailSerializer(serializers.ModelSerializer):
     chapters = serializers.SerializerMethodField()

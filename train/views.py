@@ -3,7 +3,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 from .models import Train, Feedback
-from .serializers import TrainSerializer, FeedbackSerializer
+from .serializers import TrainSerializer, FeedbackSerializer, TrainRequestSerializer
 from django.shortcuts import get_object_or_404
 
 
@@ -18,7 +18,8 @@ class TrainListView(APIView):
 
     def post(self, request):
         # ایجاد یک تمرین جدید و اختصاص آن به کاربر فعلی
-        serializer = TrainSerializer(data=request.data)
+
+        serializer = TrainRequestSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save(user=request.user)  # اختصاص تمرین به کاربر فعلی
             return Response(serializer.data, status=status.HTTP_201_CREATED)

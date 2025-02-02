@@ -29,6 +29,8 @@ class CourseBase(models.Model):
     course_contacts = RichTextField( )
     course_requirements = RichTextField( )
     course_prerequisite = RichTextField( )
+    tutorial = models.FileField( blank=True,null=True,upload_to='course/tutorial')
+    intro = models.FileField( blank=True,null=True,upload_to='course/intro')
     training_model = RichTextField( blank=True,null=True)
     course_achievement = RichTextField( blank=True,null=True)
     image = models.ImageField( blank=True,null=True)

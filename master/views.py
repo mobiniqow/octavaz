@@ -3,7 +3,8 @@ from time import timezone
 from rest_framework import viewsets, status
 from rest_framework.response import Response
 from rest_framework.views import APIView
-
+from django.utils import timezone
+from datetime import timedelta
 from course.models import CourseMaster, UserCourse, Course, CourseChapter, CourseChapterMedia
 from course.serializers import CourseSerializer, CourseChapterSerializer, CourseChapterMediaSerializer, \
     CourseDetailSerializer
@@ -113,7 +114,7 @@ class ArtistTrainings(APIView):
         course_id = kwargs.get("id")
 
         if course_id:  # وقتی ID داده شده، تکالیف یک کورس خاص بازگردانده می‌شود
-            trainings = Train.objects.filter(course_section__course__id=course_id)
+            trainings = Train.objects.filter(course__id=course_id)
 
             serialized_trainings = [
                 {
@@ -127,19 +128,18 @@ class ArtistTrainings(APIView):
             ]
             return Response(serialized_trainings, status=status.HTTP_200_OK)
 
-        # وقتی ID داده نشده، لیستی از کورس‌ها بازگردانده می‌شود
         courses = (
-            CourseMaster.objects.filter(master=user)
-            .values("course__id", "course__name")
+            CourseMaster.objects.filter(master__master=user)
+            .values("course_id", "course__name")
             .distinct()
         )
 
         course_stats = []
         for course in courses:
-            course_id = course["course__id"]
+            course_id = course["course_id"]
             course_name = course["course__name"]
-            student_count = Train.objects.filter(course_section__course__id=course_id).values("user").distinct().count()
-            assignment_count = Train.objects.filter(course_section__course__id=course_id).count()
+            student_count = Train.objects.filter(course_id=course_id).values("user").distinct().count()
+            assignment_count = Train.objects.filter(course_id=course_id).count()
 
             course_stats.append(
                 {
@@ -155,23 +155,24 @@ class ArtistTrainings(APIView):
 
 class FeedbackView(APIView):
 
-    def post(self, request, train_id):
+    def post(self, request, feedback_id):
         """
         Add feedback for a specific train.
         """
-        train = Train.objects.filter(id=train_id).first()
+        train = Train.objects.filter(pk=feedback_id).first()
         if not train:
             return Response({"error": "Train not found"}, status=status.HTTP_404_NOT_FOUND)
-
-        data = request.data
-        data["train"] = train.id
-        data["master"] = request.user.id
-        serializer = FeedbackSerializer(data=data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
+        try:
+            data = request.data
+            data["train"] = train.id
+            data["master"] = request.user.id
+            serializer = FeedbackSerializer(data=data)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
     def put(self, request, feedback_id):
         """
         Update feedback.
