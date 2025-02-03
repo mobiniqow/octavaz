@@ -4,7 +4,8 @@ from rest_framework import filters
 
 from tickets.models import TicketResponse
 from wallet.models import Transaction
-from .models import Category, Course, CourseChapter, Section, UserCourse, CourseBase, CourseQuestion, CourseMaster
+from .models import Category, Course, CourseChapter, Section, UserCourse, CourseBase, CourseQuestion, CourseMaster, \
+    CourseAnswer
 from .serializers import SerializerCategorySerializer, CourseSerializer, CourseChapterSerializer, SectionSerializer, \
     CourseBaseSerializer, CourseQuestionSerializer, CourseAnswerSerializer
 from .filters import CourseFilter, BaseCourseFilter
@@ -127,14 +128,15 @@ class CourseAnswerView(APIView):
         if not question:
             return Response({"error": "Question not found"}, status=status.HTTP_404_NOT_FOUND)
 
-        data = request.data
+        data_req = request.data
+        data = {}
         data['question'] = question.id
         data['responder'] = request.user.id
+        data['answer_text'] = data_req.get('answer_text')
         serializer = CourseAnswerSerializer(data=data)
         if serializer.is_valid():
-            serializer.save()
-            # Update question status to 'ANSWERED'
             question.status = 'ANSWERED'
+            CourseAnswer.objects.create(**serializer.validated_data,responder=request.user)
             question.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
