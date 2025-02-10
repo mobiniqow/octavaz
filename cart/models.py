@@ -25,6 +25,7 @@ class CartItem(models.Model):
             return f"{self.course.name} in {self.cart.user.user_name}'s cart"
         return f"Chapter {self.course_chapter.name} in {self.cart.user.user_name}'s cart"
 
+
 @receiver(post_save, sender=User)
 def create_cart_for_user(sender, instance, created, **kwargs):
     if created:

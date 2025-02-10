@@ -4,10 +4,12 @@ from cart.models import Cart
 from rest_framework.decorators import api_view
 from django.http import JsonResponse
 
-from course.models import UserCourse
-from .models import Transaction
+from course.models import UserCourse, CourseMaster
+from .models import Transaction, CourseIncoming
 from django.http import JsonResponse
 from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from rest_framework.views import APIView
 from .models import Transaction, Payment
 import requests
 import json
@@ -16,6 +18,8 @@ import json
 from django.http import JsonResponse
 from rest_framework.decorators import api_view
 from django.conf import settings
+
+from .serializers import CourseIncomingSerializer
 
 
 @api_view(['POST'])
@@ -161,3 +165,11 @@ def get_transactions(request):
         return JsonResponse({"error": "تراکنشی یافت نشد"}, status=404)
 
     return JsonResponse(list(transactions), safe=False)
+
+
+class CourseIncomingView(APIView):
+    def get(self, request):
+        masters = [i.course.id for i in CourseMaster.objects.filter(master__master = request.user)]
+        incoming_courses = CourseIncoming.objects.filter(course_id__in = masters)
+        serializer = CourseIncomingSerializer(incoming_courses, many=True)
+        return Response(serializer.data,)

@@ -67,7 +67,7 @@ class RemoveFromCart(APIView):
 
     def delete(self, request, item_id):
         try:
-            cart_item = CartItem.objects.get(id=item_id)
+            cart_item = CartItem.objects.get(course=item_id)
 
         except CartItem.DoesNotExist:
             return Response({'detail': 'Cart item not found.'}, status=status.HTTP_404_NOT_FOUND)

@@ -2,9 +2,13 @@ from django.db import models
 from django.conf import settings
 from django.utils import timezone
 import requests
-from cart.models import Cart
+from cart.models import Cart, CartItem
 
 import json
+
+from course.models import Course
+
+
 class Transaction(models.Model):
     TRANSACTION_TYPES = [
         ('deposit', 'Deposit'),
@@ -32,6 +36,9 @@ class Transaction(models.Model):
         if self.transaction_type == 'deposit' and self.status == 'success':
             # پرداخت موفق
             cart = Cart.objects.filter(user=self.user).first()
+            for i in CartItem.objects.filter(cart=cart):
+                CourseIncoming.objects.create(course=i.course, price=i.course.price,user=i.cart.user)
+
             if cart:
                 cart.items.all().delete()
         super().save(*args, **kwargs)
@@ -42,7 +49,8 @@ class Payment(models.Model):
     cart = models.ForeignKey(Cart, on_delete=models.CASCADE)
     transaction = models.OneToOneField(Transaction, on_delete=models.CASCADE)
     payment_url = models.URLField(null=True, blank=True)
-    status = models.CharField(max_length=10, choices=[('pending', 'Pending'), ('completed', 'Completed'), ('failed', 'Failed')], default='pending')
+    status = models.CharField(max_length=10, choices=[('pending', 'Pending'), ('completed', 'Completed'),
+                                                      ('failed', 'Failed')], default='pending')
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -69,7 +77,7 @@ class Payment(models.Model):
             if response_data['data']['code'] == 100:
                 self.payment_url = response_data['data']
                 transaction = self.transaction
-                transaction.authority =  response_data  ['data']['authority']
+                transaction.authority = response_data['data']['authority']
                 transaction.save()
                 self.status = 'pending'
                 self.save()
@@ -83,3 +91,8 @@ class Payment(models.Model):
             self.save()
             raise Exception("خطا در ارتباط با زرین‌پال")
 
+
+class CourseIncoming(models.Model):
+    course = models.ForeignKey(Course, on_delete=models.SET_NULL, null=True)
+    price = models.IntegerField(default=0, )
+    user = models.ForeignKey("account.User", on_delete=models.CASCADE, null=True, blank=True)

@@ -1,7 +1,8 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from .views import ArtistViewSet, MasterCourseView, ArtistSalesView, MasterTransactionView, ArtistTrainings, \
-    FeedbackView, CourseAnalyticsView, ChapterMediaManagementView, ChapterManagementView, CourseManagementView
+    FeedbackView, CourseAnalyticsView, ChapterMediaManagementView, ChapterManagementView, CourseManagementView, \
+    IssueCertificateView, ViewCertificateView, CertificateInfoView, ViewAllCertificateView
 
 router = DefaultRouter()
 router.register(r"artists", ArtistViewSet)
@@ -21,5 +22,10 @@ urlpatterns = [
     path('chapters/<int:chapter_id>/media/', ChapterMediaManagementView.as_view(), name='chapter-media-create'),
     path('media/<int:media_id>/', ChapterMediaManagementView.as_view(), name='media-delete'),
     path('courses/<int:course_id>/analytics/', CourseAnalyticsView.as_view(), name='course-analytics'),
+    # certificate
+    path('issue_certificate/', IssueCertificateView.as_view(), name='issue_certificate'),
+    path('view_certificate/', ViewAllCertificateView.as_view(), name='view_all_certificate'),
+    path('view_certificate/<uuid:certificate_id>/', ViewCertificateView.as_view(), name='view_certificate'),
+    path('certificate_info/<uuid:certificate_id>/', CertificateInfoView.as_view(), name='certificate_info'),
 
 ]

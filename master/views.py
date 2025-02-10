@@ -11,10 +11,15 @@ from course.serializers import CourseSerializer, CourseChapterSerializer, Course
 from train.models import Train, Feedback
 from train.serializers import FeedbackSerializer
 from .models import Artist, ArtistTransaction
-from .serializers import ArtistSerializer, ArtistPaymentRequestSerializer, ArtistTransactionSerializers
+from .serializers import ArtistSerializer, ArtistPaymentRequestSerializer, ArtistTransactionSerializers, \
+    CertificateSerializer, CertificateUserSerializer
 from django.db.models import Sum
 from datetime import timedelta
-
+from rest_framework import status, permissions
+from rest_framework.response import Response
+from rest_framework.views import APIView
+from .models import CourseMasterCertificate
+from .serializers import CertificateCreateSerializer
 
 class ArtistViewSet(viewsets.ModelViewSet):
     queryset = Artist.objects.all()
@@ -346,3 +351,56 @@ class CourseAnalyticsView(APIView):
             "created_at": course.created_at,
         }
         return Response(data, status=status.HTTP_200_OK)
+
+
+class IssueCertificateView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request):
+        # بررسی اینکه کاربر ادمین باشد
+        if not request.user.is_staff:
+            return Response({"detail": "You do not have permission to issue certificates."},
+                            status=status.HTTP_403_FORBIDDEN)
+
+        serializer = CertificateCreateSerializer(data=request.data, context={'request': request})
+        if serializer.is_valid():
+            certificate = serializer.save()
+            return Response({"detail": "Certificate issued successfully.", "certificate_id": certificate.id},
+                            status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class ViewAllCertificateView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request,  ):
+        try:
+            certificate = CourseMasterCertificate.objects.filter( issued_to=request.user)
+        except CourseMasterCertificate.DoesNotExist:
+            return Response({"detail": "Certificate not found."}, status=status.HTTP_404_NOT_FOUND)
+
+        serializer = CertificateUserSerializer(certificate,many=True)
+        return Response(serializer.data)
+
+class ViewCertificateView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request, certificate_id):
+        try:
+            certificate = CourseMasterCertificate.objects.get(id=certificate_id, issued_to=request.user)
+        except CourseMasterCertificate.DoesNotExist:
+            return Response({"detail": "Certificate not found."}, status=status.HTTP_404_NOT_FOUND)
+
+        serializer = CertificateUserSerializer(certificate)
+        return Response(serializer.data)
+
+class CertificateInfoView(APIView):
+
+    def get(self, request, certificate_id):
+        try:
+            certificate = CourseMasterCertificate.objects.get(id=certificate_id)
+        except CourseMasterCertificate.DoesNotExist:
+            return Response({"detail": "Certificate not found."}, status=status.HTTP_404_NOT_FOUND)
+
+        # ارسال اطلاعات بدون فایل PDF
+        serializer = CertificateSerializer(certificate)
+        return Response(serializer.data)

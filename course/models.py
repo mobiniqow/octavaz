@@ -63,7 +63,7 @@ class Course(models.Model):
     course_prerequisite = RichTextField( )
     training_model = RichTextField( )
     course_achievement = RichTextField( )
-
+    created_at = models.DateField(auto_now_add=True)
 
 class CourseMaster(models.Model):
     master = models.ForeignKey('master.Artist', on_delete=models.SET_NULL, null=True)

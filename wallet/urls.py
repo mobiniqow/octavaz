@@ -13,4 +13,5 @@ urlpatterns = [
 
     # API برای دریافت URL پرداخت زرین‌پال
     path('payment/url/', views.get_payment_url, name='get_payment_url'),
+    path('user-transactions/', views.CourseIncomingView.as_view(), name='user-transactions')
 ]
